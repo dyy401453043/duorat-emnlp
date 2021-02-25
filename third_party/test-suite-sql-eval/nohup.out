@@ -1,0 +1,25 @@
+medium pred: SELECT Avg(singer.Age), Min(singer.Age), Max(singer.Age) FROM singer WHERE singer.Is_male = "f"
+medium gold: SELECT avg(age) ,  min(age) ,  max(age) FROM singer WHERE country  =  'France'
+
+medium pred: SELECT Max(stadium.Capacity), Avg(stadium.Average) FROM stadium
+medium gold: select max(capacity), average from stadium
+
+medium pred: SELECT stadium.Name, stadium.Capacity FROM stadium ORDER BY stadium.Highest Desc LIMIT 1
+medium gold: SELECT name ,  capacity FROM stadium ORDER BY average DESC LIMIT 1
+
+Traceback (most recent call last):
+  File "evaluation.py", line 948, in <module>
+    evaluate(args.gold, args.pred, args.db, args.etype, kmaps, args.plug_value, args.keep_distinct, args.progress_bar_for_each_datapoint)
+  File "evaluation.py", line 620, in evaluate
+    keep_distinct=keep_distinct, progress_bar_for_each_datapoint=progress_bar_for_each_datapoint)
+  File "/raid/chailz-s20/nl2sql/duorat/third_party/test-suite-sql-eval/exec_eval.py", line 212, in eval_exec_match
+    p_flag, p_denotation = exec_on_db(db_path, pred)
+  File "/raid/chailz-s20/nl2sql/duorat/third_party/test-suite-sql-eval/exec_eval.py", line 140, in exec_on_db
+    subprocess.call(['python3', 'exec_subprocess.py', f_prefix], timeout=timeout, stderr=open('runerr.log', 'a'))
+  File "/home/chailz-s20/data/miniconda3/envs/duorat/lib/python3.7/subprocess.py", line 341, in call
+    return p.wait(timeout=timeout)
+  File "/home/chailz-s20/data/miniconda3/envs/duorat/lib/python3.7/subprocess.py", line 1019, in wait
+    return self._wait(timeout=timeout)
+  File "/home/chailz-s20/data/miniconda3/envs/duorat/lib/python3.7/subprocess.py", line 1647, in _wait
+    time.sleep(delay)
+KeyboardInterrupt
