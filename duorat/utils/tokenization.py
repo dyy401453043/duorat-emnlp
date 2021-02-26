@@ -62,13 +62,21 @@ class StanzaTokenizer(AbstractTokenizer):
     def __init__(self):
         stanza.download("en", processors="tokenize")
         self.nlp = stanza.Pipeline(lang="en", processors="tokenize")
+        self.lemmatizer = WordNetLemmatizer()
 
     @lru_cache(maxsize=1024)
-    def tokenize(self, s: str) -> List[str]:
+    def _tokenize(self, s: str) -> List[str]:
         doc = self.nlp(s)
         return [
-            token.question for sentence in doc.sentences for token in sentence.tokens
+            self.lemmatizer.lemmatize(token.text) for sentence in doc.sentences for token in sentence.tokens
         ]
+
+    def tokenize(self, s: str) -> List[str]:
+        return [token.lower() for token in self._tokenize(s)]
+
+    def tokenize_with_raw(self, s: str) -> List[Tuple[str, str]]:
+        res = [(token.lower(), token) for token in self._tokenize(s)]
+        return res
 
     def detokenize(self, xs: Sequence[str]) -> str:
         return " ".join(xs)

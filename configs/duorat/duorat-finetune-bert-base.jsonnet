@@ -1,4 +1,4 @@
-(import 'duorat-base-origin.libsonnet')(output_from=true) {
+(import 'duorat-base.libsonnet')(output_from=true) {
     lr_scheduler: {
         "decay_steps": 98000,
         "end_lr": 0,

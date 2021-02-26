@@ -84,13 +84,13 @@ function(output_from, data_path='data/', save_dir='duorat/') {
             val_num_schema_shuffles: 0,
             save_path: PREFIX + save_dir,
             tokenizer: {
-                name: 'CoreNLPTokenizer',
+                name: 'StanzaTokenizer',
             },
             transition_system: {
                 name: 'SpiderTransitionSystem',
                 asdl_grammar_path: 'duorat/asdl/lang/spider/spider_asdl.txt',
                 tokenizer: {
-                    name: 'CoreNLPTokenizer',
+                    name: 'StanzaTokenizer',
                 },
                 output_from: output_from,
                 use_table_pointer: output_from,
@@ -100,7 +100,7 @@ function(output_from, data_path='data/', save_dir='duorat/') {
             schema_linker: {
                 name: 'SpiderSchemaLinker',
                 tokenizer: {
-                    name: 'CoreNLPTokenizer',
+                    name: 'StanzaTokenizer',
                 },
                 max_n_gram: 5,
                 with_stemming: false,
