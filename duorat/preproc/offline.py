@@ -448,24 +448,26 @@ class BertDuoRATPreproc(DuoRATPreproc):
         #     else list()
         # ]
        # print(question)
-        #with open('link.log', 'a') as f:
-        print('question: {}'.format(item.question))
-        print(f'query:{item.query}')
-        flag = 0
-        for x in question:
-        # print(x)
-            if len(x.match_tags)>0:
-                if flag == 0:
-                    print('[', end='')
-                    flag = 1
-            if len(x.match_tags)==0:
-                if flag == 1:
-                    print(']',end='')
-                    flag = 0
-            print(x.value, end=' ')
-
-        print('\n')
-        print('------------------------')
+        with open('link.log', 'a') as f:
+            f.write('db_path: {}'.format(sql_schema.db_path)+'\n')
+            f.write('question: {}'.format(item.question)+'\n')
+            f.write(f'query: {item.query}'+'\n')
+            flag = 0
+            f.write('simple_link:')
+            for x in question:
+            # f.write(x)
+                if len(x.match_tags)>0:
+                    if flag == 0:
+                        f.write('[')
+                        flag = 1
+                if len(x.match_tags)==0:
+                    if flag == 1:
+                        f.write(']')
+                        flag = 0
+                f.write(x.value+' ')
+            f.write('\n')
+            f.write('all_link: {}'.format(item.slml_question)+'\n')
+            f.write('------------------------'+'\n')
 
 
         asdl_ast = validation_info

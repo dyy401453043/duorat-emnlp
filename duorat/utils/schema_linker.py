@@ -185,6 +185,7 @@ def tag_question_with_schema_links(
                             tagged_sequence=tagged_question_tokens, start=start, end=end
                         )
                     span = ''
+                    match_values = ''
                     for idx in range(start, end):
                         if match is VALUE_MATCH:
                             # Only keep the match with the highest confidence
@@ -199,7 +200,7 @@ def tag_question_with_schema_links(
                                 value=match_value,
                             )
                             tagged_question_tokens[idx].match_tags.append(match_tag)
-                            
+                            match_values += ' ' + match_value
                         else:
                             match_tag = ColumnMatchTag(
                                 confidence=(
@@ -212,8 +213,13 @@ def tag_question_with_schema_links(
                             )
                             tagged_question_tokens[idx].match_tags.append(match_tag)
                         span+=" "+tagged_question_tokens[idx].value
-                   # with open('link.log', 'a') as f:
-                    print(f'{match}: {n}-gram:{span}, column_name:{column_name}')
+                    # TODO just log
+                    with open('link.log', 'a') as f:
+                        if match is VALUE_MATCH:
+                            f.write(
+                                f'column-{match}: {n}-gram:{span}, column_name:{column_name}, value:{match_values}' + '\n')
+                        else:
+                            f.write(f'column-{match}: {n}-gram:{span}, column_name:{column_name}' + '\n')
     # reset BIO tags
     tagged_question_tokens: TaggedSequence = [
         replace(t, tag=OUTSIDE) for t in tagged_question_tokens
@@ -256,7 +262,9 @@ def tag_question_with_schema_links(
                             )
                         )
                         span+=" "+tagged_question_tokens[idx].value
-                    print(f'table-{match}: {n}-gram:{span}, table_name:{table_name}')
+                    # TODO just log
+                    with open('link.log', 'a') as f:
+                        f.write(f'table-{match}: {n}-gram:{span}, table_name:{table_name}'+'\n')
     return tagged_question_tokens
 
 
