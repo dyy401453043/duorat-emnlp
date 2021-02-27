@@ -37,7 +37,18 @@ from nltk.corpus import stopwords
 import nltk 
 stop_words = set(stopwords.words("english")).union({".", "?", "," })
 stemmer = nltk.PorterStemmer()
-        
+import copy
+import torch
+import torchtext
+from torchtext.vocab import GloVe
+glove_6b_100d = torchtext.vocab.GloVe(name='6B',dim=100,cache='./glove/')
+
+def similarity(str1:str, str2:str):
+    vector1 = torch.mean(glove_6b_100d.get_vecs_by_tokens(str1.split(' ')), dim=0, keepdim=False)
+    vector2 = torch.mean(glove_6b_100d.get_vecs_by_tokens(str2.split(' ')), dim=0, keepdim=False)
+    nomlized_v1 = vector1 / torch.norm(vector1)
+    nomlized_v2 = vector2 / torch.norm(vector2)
+    return torch.dot(nomlized_v1,nomlized_v2).numpy()
 
 class AbstractSchemaLinker(metaclass=abc.ABCMeta):
     @abc.abstractmethod
@@ -128,6 +139,8 @@ def tag_question_with_schema_links(
         TaggedToken(value=token, raw_value=raw_token, tag=OUTSIDE, match_tags=deque())
         for token, raw_token in tokenized_question
     ]
+    # counter for column_name column_value table_name
+    match_tags_counter = [[0,0,0] for i in range(len(tagged_question_tokens))]
 
     for n in range(max_n_gram, 0, -1):
         for (start, end), question_n_gram in get_spans(
@@ -200,6 +213,7 @@ def tag_question_with_schema_links(
                                 value=match_value,
                             )
                             tagged_question_tokens[idx].match_tags.append(match_tag)
+                            match_tags_counter[idx][1] += 1
                             match_values += ' ' + match_value
                         else:
                             match_tag = ColumnMatchTag(
@@ -212,6 +226,7 @@ def tag_question_with_schema_links(
                                 table_id=table_id,
                             )
                             tagged_question_tokens[idx].match_tags.append(match_tag)
+                            match_tags_counter[idx][0] += 1
                         span+=" "+tagged_question_tokens[idx].value
                     # TODO just log
                     with open('link.log', 'a') as f:
@@ -261,10 +276,24 @@ def tag_question_with_schema_links(
                                 table_id=table_id,
                             )
                         )
+                        match_tags_counter[idx][2] += 1
                         span+=" "+tagged_question_tokens[idx].value
                     # TODO just log
                     with open('link.log', 'a') as f:
                         f.write(f'table-{match}: {n}-gram:{span}, table_name:{table_name}'+'\n')
+    # filter
+    for idx, tagged_token in enumerate(tagged_question_tokens):
+        KEEP_COLUMN_NAME = match_tags_counter[idx][0] <= 3
+        KEEP_COLUMN_VALUE = match_tags_counter[idx][1] <= 2
+        KEEP_TABLE_NAME = match_tags_counter[idx][2] <= 2
+        new_match_tags = deque()
+        for match_tag in tagged_token.match_tags:
+            if (type(match_tag) is ColumnMatchTag and KEEP_COLUMN_NAME) or \
+                    (type(match_tag) is ValueMatchTag and KEEP_COLUMN_VALUE) or \
+                    (type(match_tag) is TableMatchTag and KEEP_TABLE_NAME):
+                new_match_tags.append(match_tag)
+        tagged_token.match_tags = new_match_tags
+
     return tagged_question_tokens
 
 
@@ -327,25 +356,33 @@ def span_matches_entity(
     else:
         span_str = " ".join([tagged_token.value for tagged_token in tagged_span])
         entity_name_str = entity_name
-        if span_str == entity_name_str:
+        if span_str == entity_name_str or \
+            (len(span_str.split(' ')) == 1 and len(entity_name_str.split(' ')) == 1 and
+             similarity(stemmer.stem(span_str), stemmer.stem(entity_name_str)) > 0.68) or \
+                (len(span_str.split(' ')) == len(entity_name_str.split(' ')) and
+                 similarity(stemmer.stem(span_str), stemmer.stem(entity_name_str)) > 0.9):
             return EXACT_MATCH
-        
         elif span_str in entity_name_str:
-            if len(span_str)<2 and len(entity_name_str)-len(span_str)>5:
-                return NO_MATCH
-            if len(span_str)<4 and len(entity_name_str)-len(span_str)>5  and len(entity_name_str.split(' '))==1:
-                return NO_MATCH
-            return PARTIAL_MATCH
+            # if len(span_str)<2 and len(entity_name_str)-len(span_str)>5:
+            #     return NO_MATCH
+            # if len(span_str)<4 and len(entity_name_str)-len(span_str)>5  and len(entity_name_str.split(' '))==1:
+            #     return NO_MATCH
+
+            # filter with similarity
+            if len(entity_name_str.split(' '))==1:
+                return PARTIAL_MATCH if similarity(stemmer.stem(tagged_span[0].value), stemmer.stem(entity_name_str)) > 0.55 else NO_MATCH
+            else:
+                return PARTIAL_MATCH if not(len(span_str)<3 and len(entity_name_str)-len(span_str)>5) else NO_MATCH
         elif len(tagged_span) == 1:
             if stemmer.stem(tagged_span[0].value) == entity_name_str:
                 return EXACT_MATCH
 
             if stemmer.stem(tagged_span[0].value) in entity_name_str:
-                return PARTIAL_MATCH
+                return PARTIAL_MATCH if not(len(span_str)<3 and len(entity_name_str)-len(span_str)>5) else NO_MATCH
 
             if  entity_name_str in span_str:
                 # When span length is 1, also test the other inclusion
-                return PARTIAL_MATCH
-            
+                # filter
+                return PARTIAL_MATCH if similarity(stemmer.stem(tagged_span[0].value), stemmer.stem(entity_name_str)) > 0.55 else NO_MATCH
         else:
             return NO_MATCH
