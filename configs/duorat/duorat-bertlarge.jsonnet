@@ -1,6 +1,6 @@
 (import 'duorat-base.libsonnet')(output_from=true) {
     lr_scheduler: {
-        "decay_steps": 100000,
+        "decay_steps": 98000,
         "end_lr": 0,
         "name": "bert_warmup_polynomial",
         "num_warmup_steps": 2000,
