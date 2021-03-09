@@ -36,7 +36,16 @@ def main(args=None, logdir_suffix: List[str] = None):
             output_path = args.output_eval
         with open(output_path, "w") as f:
             json.dump(metrics, f)
+        wrong_inference_path = os.path.join(os.path.split(output_path)[0], 'wrong_inference.json')
+        wrong_inferences = []
+        for index, item in enumerate(metrics['per_item']):
+            if item['exact'] != 1:
+                wrong_inference = {'index':index, 'hardness':item['hardness'], 'pred':item['predicted'], 'gold':item['gold']}
+                wrong_inferences.append(wrong_inference)
+        with open(wrong_inference_path, 'w') as f:
+            json.dump(wrong_inferences, f, ensure_ascii=False, indent=4)
         print("Wrote eval results to {}".format(output_path))
+        print("Wrote wrong_inferences to {}".format(wrong_inference_path))
     else:
         print(metrics)
 
