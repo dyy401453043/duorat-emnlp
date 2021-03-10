@@ -6,7 +6,7 @@
         "gold": "SELECT avg(age) ,  min(age) ,  max(age) FROM singer WHERE country  =  'France'",
         "db_id": "concert_singer",
         "question": "What is the average, minimum, and maximum age for all French singers?",
-        "reason": "value-link, French and France"
+        "reason": "lack of value-link, ‘French’ in question and ’France‘ in database"
     },
     {
         "index": 16,
@@ -15,7 +15,7 @@
         "gold": "select max(capacity), average from stadium",
         "db_id": "concert_singer",
         "question": "What is the maximum capacity and the average of all stadiums ?",
-        "reason": "ignore"
+        "reason": "misunderstand the 'average' in question and 'average' in column"
     },
     {
         "index": 17,
@@ -23,7 +23,8 @@
         "pred": "SELECT Avg(stadium.Average), Max(stadium.Capacity) FROM stadium",
         "gold": "select avg(capacity) ,  max(capacity) from stadium",
         "db_id": "concert_singer",
-        "question": "What is the average and maximum capacities for all stadiums ?"
+        "question": "What is the average and maximum capacities for all stadiums ?",
+        "reason": "misunderstand the 'average' in question and 'average' in column"
     },
     {
         "index": 18,
@@ -31,7 +32,8 @@
         "pred": "SELECT stadium.Name, stadium.Capacity FROM stadium GROUP BY stadium.Highest ORDER BY Avg(stadium.Average) Desc LIMIT 1",
         "gold": "SELECT name ,  capacity FROM stadium ORDER BY average DESC LIMIT 1",
         "db_id": "concert_singer",
-        "question": "What is the name and capacity for the stadium with highest average attendance?"
+        "question": "What is the name and capacity for the stadium with highest average attendance?",
+        "reason": "misunderstand the 'highest' in question and 'highest' in column"
     },
     {
         "index": 19,
@@ -39,7 +41,8 @@
         "pred": "SELECT stadium.Name, stadium.Capacity FROM stadium GROUP BY stadium.Highest ORDER BY Avg(stadium.Average) Desc LIMIT 1",
         "gold": "SELECT name ,  capacity FROM stadium ORDER BY average DESC LIMIT 1",
         "db_id": "concert_singer",
-        "question": "What is the name and capacity for the stadium with the highest average attendance?"
+        "question": "What is the name and capacity for the stadium with the highest average attendance?",
+        "reason": "misunderstand the 'highest' in question and 'highest' in column"
     },
     {
         "index": 23,
@@ -47,7 +50,8 @@
         "pred": "SELECT concert.Stadium_ID, Count(*) FROM concert GROUP BY concert.Stadium_ID",
         "gold": "SELECT T2.name ,  count(*) FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id GROUP BY T1.stadium_id",
         "db_id": "concert_singer",
-        "question": "For each stadium, how many concerts play there?"
+        "question": "For each stadium, how many concerts play there?",
+        "reason": "a little slack off"
     },
     {
         "index": 36,
