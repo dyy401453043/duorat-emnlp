@@ -677,7 +677,8 @@
         "pred": "SELECT Count(*) FROM airports JOIN flights ON flights.DestAirport = airports.AirportCode WHERE airports.City = \" Aberdeen Aberdeen \" AND airports.AirportName = \" Ashley \"",
         "gold": "SELECT count(*) FROM FLIGHTS AS T1 JOIN AIRPORTS AS T2 ON T1.DestAirport  =  T2.AirportCode JOIN AIRPORTS AS T3 ON T1.SourceAirport  =  T3.AirportCode WHERE T2.City  =  \"Ashley\" AND T3.City  =  \"Aberdeen\"",
         "db_id": "flight_2",
-        "question": "How many flights depart from City 'Aberdeen' and have destination City 'Ashley'?"
+        "question": "How many flights depart from City 'Aberdeen' and have destination City 'Ashley'?",
+        "reason": "don't understand database"
     },
     {
         "index": 212,
@@ -685,7 +686,8 @@
         "pred": "SELECT Count(*) FROM airports JOIN flights ON flights.SourceAirport = airports.AirportCode WHERE airports.City = \" Aberdeen \" AND airports.AirportName = \" Ashley \"",
         "gold": "SELECT count(*) FROM FLIGHTS AS T1 JOIN AIRPORTS AS T2 ON T1.DestAirport  =  T2.AirportCode JOIN AIRPORTS AS T3 ON T1.SourceAirport  =  T3.AirportCode WHERE T2.City  =  \"Ashley\" AND T3.City  =  \"Aberdeen\"",
         "db_id": "flight_2",
-        "question": "How many flights fly from Aberdeen to Ashley?"
+        "question": "How many flights fly from Aberdeen to Ashley?",
+        "reason": "don't understand database"
     },
     {
         "index": 214,
@@ -693,7 +695,8 @@
         "pred": "SELECT Count(*) FROM airlines WHERE airlines.Airline = \" Jetue Airways \"",
         "gold": "SELECT count(*) FROM FLIGHTS AS T1 JOIN AIRLINES AS T2 ON T1.Airline  =  T2.uid WHERE T2.Airline = \"JetBlue Airways\"",
         "db_id": "flight_2",
-        "question": "Give the number of Jetblue Airways flights."
+        "question": "Give the number of Jetblue Airways flights.",
+        "reason": "don't understand database"
     },
     {
         "index": 215,
@@ -701,7 +704,8 @@
         "pred": "SELECT Count(*) FROM airlines JOIN flights ON airlines.uid = flights.Airline WHERE airlines.Airline = \" AS \" AND airlines.Airline = \" United \"",
         "gold": "SELECT count(*) FROM AIRLINES AS T1 JOIN FLIGHTS AS T2 ON T2.Airline  =  T1.uid WHERE T1.Airline  =  \"United Airlines\" AND T2.DestAirport  =  \"ASY\"",
         "db_id": "flight_2",
-        "question": "How many 'United Airlines' flights go to Airport 'ASY'?"
+        "question": "How many 'United Airlines' flights go to Airport 'ASY'?",
+        "reason": "slack off"
     },
     {
         "index": 219,
@@ -709,7 +713,8 @@
         "pred": "SELECT Count(*) FROM airports JOIN flights ON airports.AirportCode = flights.SourceAirport WHERE airports.City = \" Aberdeen Aberdeen \" AND airlines.Airline = \" United \"",
         "gold": "SELECT count(*) FROM FLIGHTS AS T1 JOIN AIRPORTS AS T2 ON T1.DestAirport  =  T2.AirportCode JOIN AIRLINES AS T3 ON T3.uid  =  T1.Airline WHERE T2.City  =  \"Aberdeen\" AND T3.Airline  =  \"United Airlines\"",
         "db_id": "flight_2",
-        "question": "How many United Airlines flights go to City 'Aberdeen'?"
+        "question": "How many United Airlines flights go to City 'Aberdeen'?",
+        "reason": "slack off"
     },
     {
         "index": 222,
@@ -717,7 +722,8 @@
         "pred": "SELECT airports.City FROM airports JOIN flights ON airports.AirportCode = flights.DestAirport GROUP BY flights.DestAirport ORDER BY Count(*) Desc LIMIT 1",
         "gold": "SELECT T1.City FROM AIRPORTS AS T1 JOIN FLIGHTS AS T2 ON T1.AirportCode  =  T2.DestAirport GROUP BY T1.City ORDER BY count(*) DESC LIMIT 1",
         "db_id": "flight_2",
-        "question": "Which city has the most frequent destination airport?"
+        "question": "Which city has the most frequent destination airport?",
+        "reason": "both right, but GROUP BY code is better"
     },
     {
         "index": 224,
@@ -725,7 +731,8 @@
         "pred": "SELECT airports.City FROM airports GROUP BY airports.City ORDER BY Count(*) Desc LIMIT 1",
         "gold": "SELECT T1.City FROM AIRPORTS AS T1 JOIN FLIGHTS AS T2 ON T1.AirportCode  =  T2.SourceAirport GROUP BY T1.City ORDER BY count(*) DESC LIMIT 1",
         "db_id": "flight_2",
-        "question": "Which city is the most frequent source airport?"
+        "question": "Which city is the most frequent source airport?",
+        "reason": "slack off, source airport"
     },
     {
         "index": 228,
@@ -733,7 +740,8 @@
         "pred": "SELECT airports.AirportCode FROM flights GROUP BY flights.SourceAirport ORDER BY Count(*) Asc LIMIT 1",
         "gold": "SELECT T1.AirportCode FROM AIRPORTS AS T1 JOIN FLIGHTS AS T2 ON T1.AirportCode  =  T2.DestAirport OR T1.AirportCode  =  T2.SourceAirport GROUP BY T1.AirportCode ORDER BY count(*) LIMIT 1",
         "db_id": "flight_2",
-        "question": "Give the code of the airport with the least flights."
+        "question": "Give the code of the airport with the least flights.",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 230,
@@ -741,7 +749,8 @@
         "pred": "SELECT airlines.Airline FROM airlines JOIN flights ON airlines.uid = flights.Airline GROUP BY flights.Airline ORDER BY Count(*) Desc LIMIT 1",
         "gold": "SELECT T1.Airline FROM AIRLINES AS T1 JOIN FLIGHTS AS T2 ON T1.uid  =  T2.Airline GROUP BY T1.Airline ORDER BY count(*) DESC LIMIT 1",
         "db_id": "flight_2",
-        "question": "What airline serves the most flights?"
+        "question": "What airline serves the most flights?",
+        "reason": "both right"
     },
     {
         "index": 231,
@@ -749,7 +758,8 @@
         "pred": "SELECT airlines.Abbreviation, airlines.Country FROM airlines JOIN flights ON airlines.uid = flights.Airline GROUP BY flights.Airline ORDER BY Count(*) Asc LIMIT 1",
         "gold": "SELECT T1.Abbreviation ,  T1.Country FROM AIRLINES AS T1 JOIN FLIGHTS AS T2 ON T1.uid  =  T2.Airline GROUP BY T1.Airline ORDER BY count(*) LIMIT 1",
         "db_id": "flight_2",
-        "question": "Find the abbreviation and country of the airline that has fewest number of flights?"
+        "question": "Find the abbreviation and country of the airline that has fewest number of flights?",
+        "reason": "both right"
     },
     {
         "index": 232,
@@ -757,7 +767,8 @@
         "pred": "SELECT airlines.Abbreviation, airlines.Country FROM airlines JOIN flights ON airlines.uid = flights.Airline GROUP BY airlines.Abbreviation ORDER BY Count(*) Asc LIMIT 1",
         "gold": "SELECT T1.Abbreviation ,  T1.Country FROM AIRLINES AS T1 JOIN FLIGHTS AS T2 ON T1.uid  =  T2.Airline GROUP BY T1.Airline ORDER BY count(*) LIMIT 1",
         "db_id": "flight_2",
-        "question": "What is the abbreviation of the airilne has the fewest flights and what country is it in?"
+        "question": "What is the abbreviation of the airilne has the fewest flights and what country is it in?",
+        "reason": "both right"
     },
     {
         "index": 241,
@@ -765,7 +776,8 @@
         "pred": "SELECT airlines.Airline FROM airlines JOIN flights ON airlines.uid = flights.Airline GROUP BY flights.Airline HAVING Count(*) >= 10",
         "gold": "SELECT T1.Airline FROM AIRLINES AS T1 JOIN FLIGHTS AS T2 ON T1.uid  =  T2.Airline GROUP BY T1.Airline HAVING count(*)  >  10",
         "db_id": "flight_2",
-        "question": "Find all airlines that have at least 10 flights."
+        "question": "Find all airlines that have at least 10 flights.",
+        "reason": "both right"
     },
     {
         "index": 242,
@@ -773,7 +785,8 @@
         "pred": "SELECT airlines.Airline FROM airlines JOIN flights ON airlines.uid = flights.Airline GROUP BY flights.Airline HAVING Count(*) >= 10",
         "gold": "SELECT T1.Airline FROM AIRLINES AS T1 JOIN FLIGHTS AS T2 ON T1.uid  =  T2.Airline GROUP BY T1.Airline HAVING count(*)  >  10",
         "db_id": "flight_2",
-        "question": "Which airlines have at least 10 flights?"
+        "question": "Which airlines have at least 10 flights?",
+        "reason": "both right"
     },
     {
         "index": 243,
@@ -781,7 +794,8 @@
         "pred": "SELECT airlines.Airline FROM flights GROUP BY flights.Airline HAVING Count(*) < 200",
         "gold": "SELECT T1.Airline FROM AIRLINES AS T1 JOIN FLIGHTS AS T2 ON T1.uid  =  T2.Airline GROUP BY T1.Airline HAVING count(*)  <  200",
         "db_id": "flight_2",
-        "question": "Find all airlines that have fewer than 200 flights."
+        "question": "Find all airlines that have fewer than 200 flights.",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 244,
@@ -789,7 +803,8 @@
         "pred": "SELECT airlines.Airline FROM airlines JOIN flights ON airlines.uid = flights.Airline WHERE flights.FlightNo < 200",
         "gold": "SELECT T1.Airline FROM AIRLINES AS T1 JOIN FLIGHTS AS T2 ON T1.uid  =  T2.Airline GROUP BY T1.Airline HAVING count(*)  <  200",
         "db_id": "flight_2",
-        "question": "Which airlines have less than 200 flights?"
+        "question": "Which airlines have less than 200 flights?",
+        "reason": "wrong understanding of '200'"
     },
     {
         "index": 255,
@@ -797,7 +812,8 @@
         "pred": "SELECT Count(*) FROM airports WHERE airports.City = \" Aberdeen Aberdeen \" OR airports.City = \" Abilene \"",
         "gold": "SELECT count(*) FROM Flights AS T1 JOIN Airports AS T2 ON T1.DestAirport  =  T2.AirportCode WHERE T2.city  =  \"Aberdeen\" OR T2.city  =  \"Abilene\"",
         "db_id": "flight_2",
-        "question": "Find the number of flights landing in the city of Aberdeen or Abilene."
+        "question": "Find the number of flights landing in the city of Aberdeen or Abilene.",
+        "reason": "can't understand 'landing in'"
     },
     {
         "index": 256,
@@ -805,7 +821,8 @@
         "pred": "SELECT Count(*) FROM airports WHERE airports.City = \" Aberdeen Aberdeen \" OR airports.City = \" Ab \"",
         "gold": "SELECT count(*) FROM Flights AS T1 JOIN Airports AS T2 ON T1.DestAirport  =  T2.AirportCode WHERE T2.city  =  \"Aberdeen\" OR T2.city  =  \"Abilene\"",
         "db_id": "flight_2",
-        "question": "How many flights land in Aberdeen or Abilene?"
+        "question": "How many flights land in Aberdeen or Abilene?",
+        "reason": "can't understand 'land in'"
     },
     {
         "index": 257,
@@ -813,7 +830,8 @@
         "pred": "SELECT airports.AirportName FROM airports WHERE airports.AirportCode NOT IN (SELECT flights.SourceAirport FROM flights)",
         "gold": "SELECT AirportName FROM Airports WHERE AirportCode NOT IN (SELECT SourceAirport FROM Flights UNION SELECT DestAirport FROM Flights)",
         "db_id": "flight_2",
-        "question": "Find the name of airports which do not have any flight in and out."
+        "question": "Find the name of airports which do not have any flight in and out.",
+        "reason": "can't understand 'in and out'"
     },
     {
         "index": 258,
@@ -821,7 +839,8 @@
         "pred": "SELECT airports.AirportName FROM airports EXCEPT SELECT airports.AirportName FROM airports JOIN flights ON airports.AirportCode = flights.DestAirport",
         "gold": "SELECT AirportName FROM Airports WHERE AirportCode NOT IN (SELECT SourceAirport FROM Flights UNION SELECT DestAirport FROM Flights)",
         "db_id": "flight_2",
-        "question": "Which airports do not have departing or arriving flights?"
+        "question": "Which airports do not have departing or arriving flights?",
+        "reason": "can't understand 'departing or arriving'"
     },
     {
         "index": 270,
