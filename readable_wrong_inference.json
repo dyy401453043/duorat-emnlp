@@ -533,7 +533,8 @@
         "pred": "SELECT cars_data.Cylinders FROM cars_data WHERE cars_data.Accelerate = \" volvo \" ORDER BY cars_data.Accelerate Asc LIMIT 1",
         "gold": "SELECT T1.cylinders FROM CARS_DATA AS T1 JOIN CAR_NAMES AS T2 ON T1.Id  =  T2.MakeId WHERE T2.Model  =  'volvo' ORDER BY T1.accelerate ASC LIMIT 1;",
         "db_id": "car_1",
-        "question": "For model volvo, how many cylinders does the car with the least accelerate have?"
+        "question": "For model volvo, how many cylinders does the car with the least accelerate have?",
+        "reason": "slack off"
     },
     {
         "index": 158,
@@ -541,7 +542,8 @@
         "pred": "SELECT cars_data.Cylinders FROM cars_data WHERE cars_data.Accelerate = \" volvo \" ORDER BY cars_data.Accelerate Asc LIMIT 1",
         "gold": "SELECT T1.cylinders FROM CARS_DATA AS T1 JOIN CAR_NAMES AS T2 ON T1.Id  =  T2.MakeId WHERE T2.Model  =  'volvo' ORDER BY T1.accelerate ASC LIMIT 1;",
         "db_id": "car_1",
-        "question": "For a volvo model, how many cylinders does the version with least accelerate have?"
+        "question": "For a volvo model, how many cylinders does the version with least accelerate have?",
+        "reason": "slack off"
     },
     {
         "index": 159,
@@ -549,7 +551,8 @@
         "pred": "SELECT Count(*) FROM cars_data WHERE cars_data.Accelerate > (SELECT Max(cars_data.Accelerate) FROM cars_data)",
         "gold": "SELECT COUNT(*) FROM CARS_DATA WHERE Accelerate  >  ( SELECT Accelerate FROM CARS_DATA ORDER BY Horsepower DESC LIMIT 1 );",
         "db_id": "car_1",
-        "question": "How many cars have a larger accelerate than the car with the largest horsepower?"
+        "question": "How many cars have a larger accelerate than the car with the largest horsepower?",
+        "reason": "slack off"
     },
     {
         "index": 160,
@@ -557,7 +560,8 @@
         "pred": "SELECT Count(*) FROM cars_data WHERE cars_data.Accelerate > (SELECT Max(cars_data.Accelerate) FROM cars_data)",
         "gold": "SELECT COUNT(*) FROM CARS_DATA WHERE Accelerate  >  ( SELECT Accelerate FROM CARS_DATA ORDER BY Horsepower DESC LIMIT 1 );",
         "db_id": "car_1",
-        "question": "What is the number of cars with a greater accelerate than the one with the most horsepower?"
+        "question": "What is the number of cars with a greater accelerate than the one with the most horsepower?",
+        "reason": "slack off"
     },
     {
         "index": 161,
@@ -565,7 +569,8 @@
         "pred": "SELECT Count(*) FROM (SELECT car_makers.Country FROM car_makers GROUP BY car_makers.Country HAVING Count(*) > 2)",
         "gold": "select count(*) from countries as t1 join car_makers as t2 on t1.countryid  =  t2.country group by t1.countryid having count(*)  >  2",
         "db_id": "car_1",
-        "question": "How many countries has more than 2 car makers ?"
+        "question": "How many countries has more than 2 car makers ?",
+        "wrong": "wrong gold"
     },
     {
         "index": 162,
@@ -573,7 +578,8 @@
         "pred": "SELECT Count(*) FROM (SELECT car_makers.Country FROM car_makers GROUP BY car_makers.Country HAVING Count(*) > 2)",
         "gold": "select count(*) from countries as t1 join car_makers as t2 on t1.countryid  =  t2.country group by t1.countryid having count(*)  >  2",
         "db_id": "car_1",
-        "question": "What is the number of countries with more than 2 car makers ?"
+        "question": "What is the number of countries with more than 2 car makers ?",
+        "wrong": "wrong gold"
     },
     {
         "index": 165,
@@ -581,7 +587,8 @@
         "pred": "SELECT cars_data.Horsepower FROM cars_data WHERE cars_data.Cylinders = 4 ORDER BY cars_data.Horsepower Desc LIMIT 1",
         "gold": "SELECT T1.Model FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id WHERE T2.Cylinders  =  4 ORDER BY T2.horsepower DESC LIMIT 1;",
         "db_id": "car_1",
-        "question": "For the cars with 4 cylinders, which model has the largest horsepower?"
+        "question": "For the cars with 4 cylinders, which model has the largest horsepower?",
+        "reason": "slack off"
     },
     {
         "index": 166,
@@ -589,7 +596,8 @@
         "pred": "SELECT model_list.Model FROM cars_data WHERE cars_data.Cylinders = \" 4 \" ORDER BY cars_data.Horsepower Desc LIMIT 1",
         "gold": "SELECT T1.Model FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id WHERE T2.Cylinders  =  4 ORDER BY T2.horsepower DESC LIMIT 1;",
         "db_id": "car_1",
-        "question": "For all of the 4 cylinder cars, which model has the most horsepower?"
+        "question": "For all of the 4 cylinder cars, which model has the most horsepower?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 167,
@@ -597,7 +605,8 @@
         "pred": "SELECT *, car_names.Make FROM car_names JOIN cars_data ON car_names.MakeId = cars_data.Id WHERE cars_data.Horsepower < 3 GROUP BY car_names.MakeId",
         "gold": "SELECT T2.MakeId ,  T2.Make FROM CARS_DATA AS T1 JOIN CAR_NAMES AS T2 ON T1.Id  =  T2.MakeId WHERE T1.Horsepower  >  (SELECT min(Horsepower) FROM CARS_DATA) AND T1.Cylinders  <=  3;",
         "db_id": "car_1",
-        "question": "Among the cars with more than lowest horsepower, which ones do not have more than 3 cylinders? List the car makeid and make name."
+        "question": "Among the cars with more than lowest horsepower, which ones do not have more than 3 cylinders? List the car makeid and make name.",
+        "reason": "'makeid', 'cylinders', no_link, problem in similarity"
     },
     {
         "index": 168,
@@ -605,7 +614,8 @@
         "pred": "SELECT car_names.MakeId, car_names.Make FROM cars_data JOIN car_names ON cars_data.Id = car_names.MakeId WHERE cars_data.Cylinders < 4 AND cars_data.Horsepower != (SELECT Min(cars_data.Horsepower) FROM cars_data)",
         "gold": "select t2.makeid ,  t2.make from cars_data as t1 join car_names as t2 on t1.id  =  t2.makeid where t1.horsepower  >  (select min(horsepower) from cars_data) and t1.cylinders  <  4;",
         "db_id": "car_1",
-        "question": "Among the cars that do not have the minimum horsepower , what are the make ids and names of all those with less than 4 cylinders ?"
+        "question": "Among the cars that do not have the minimum horsepower , what are the make ids and names of all those with less than 4 cylinders ?",
+        "reason": "both right"
     },
     {
         "index": 171,
@@ -613,7 +623,8 @@
         "pred": "SELECT model_list.Model FROM model_list WHERE model_list.Maker < 3500 EXCEPT SELECT model_list.Model FROM model_list JOIN car_makers ON model_list.Maker = car_makers.Id WHERE car_makers.FullName = \" Ford Motor Company \"",
         "gold": "SELECT DISTINCT T1.model FROM MODEL_LIST AS T1 JOIN CAR_NAMES AS T2 ON T1.Model  =  T2.Model JOIN CARS_DATA AS T3 ON T2.MakeId  =  T3.Id JOIN CAR_MAKERS AS T4 ON T1.Maker  =  T4.Id WHERE T3.weight  <  3500 AND T4.FullName != 'Ford Motor Company';",
         "db_id": "car_1",
-        "question": "Which models are lighter than 3500 but not built by the 'Ford Motor Company'?"
+        "question": "Which models are lighter than 3500 but not built by the 'Ford Motor Company'?",
+        "reason": "too diffcult, no link about 3500"
     },
     {
         "index": 172,
@@ -621,7 +632,8 @@
         "pred": "SELECT DISTINCT model_list.Model FROM model_list JOIN model_list WHERE car_makers.FullName < 3500 EXCEPT SELECT model_list.Model FROM car_makers ON car_makers.Id = car_makers.Id JOIN model_list WHERE car_makers.FullName = \" Ford Motor Company \"",
         "gold": "SELECT DISTINCT T1.model FROM MODEL_LIST AS T1 JOIN CAR_NAMES AS T2 ON T1.Model  =  T2.Model JOIN CARS_DATA AS T3 ON T2.MakeId  =  T3.Id JOIN CAR_MAKERS AS T4 ON T1.Maker  =  T4.Id WHERE T3.weight  <  3500 AND T4.FullName != 'Ford Motor Company';",
         "db_id": "car_1",
-        "question": "What are the different models wthat are lighter than 3500 but were not built by the Ford Motor Company?"
+        "question": "What are the different models wthat are lighter than 3500 but were not built by the Ford Motor Company?",
+        "reason": "too diffcult, no link about 3500"
     },
     {
         "index": 173,
@@ -629,7 +641,8 @@
         "pred": "SELECT countries.CountryName FROM countries WHERE countries.CountryId NOT IN (SELECT car_makers.Country FROM car_makers)",
         "gold": "SELECT CountryName FROM countries EXCEPT SELECT T1.CountryName FROM countries AS T1 JOIN CAR_MAKERS AS T2 ON T1.countryId  =  T2.Country;",
         "db_id": "car_1",
-        "question": "What are the name of the countries where there is not a single car maker?"
+        "question": "What are the name of the countries where there is not a single car maker?",
+        "reason": "both right"
     },
     {
         "index": 174,
@@ -637,7 +650,8 @@
         "pred": "SELECT countries.CountryName FROM countries WHERE countries.CountryId NOT IN (SELECT car_makers.Country FROM car_makers)",
         "gold": "SELECT CountryName FROM countries EXCEPT SELECT T1.CountryName FROM countries AS T1 JOIN CAR_MAKERS AS T2 ON T1.countryId  =  T2.Country;",
         "db_id": "car_1",
-        "question": "What are the names of the countries with no car makers?"
+        "question": "What are the names of the countries with no car makers?",
+        "reason": "both right"
     },
     {
         "index": 175,
@@ -645,7 +659,8 @@
         "pred": "SELECT car_makers.Id, car_makers.Maker FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker GROUP BY car_makers.Id HAVING Count(*) >= 2 INTERSECT SELECT car_makers.Id, car_makers.Maker FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker GROUP BY car_makers.Id HAVING Count(*) > 2",
         "gold": "select t1.id ,  t1.maker from car_makers as t1 join model_list as t2 on t1.id  =  t2.maker group by t1.id having count(*)  >=  2 intersect select t1.id ,  t1.maker from car_makers as t1 join model_list as t2 on t1.id  =  t2.maker join car_names as t3 on t2.model  =  t3.model group by t1.id having count(*)  >  3;",
         "db_id": "car_1",
-        "question": "Which are the car makers which produce at least 2 models and more than 3 car makers ? List the id and the maker ."
+        "question": "Which are the car makers which produce at least 2 models and more than 3 car makers ? List the id and the maker .",
+        "reason": "slack off"
     },
     {
         "index": 176,
@@ -653,7 +668,8 @@
         "pred": "SELECT car_makers.Id, car_makers.Maker FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker GROUP BY car_makers.Id HAVING Count(*) >= 2 INTERSECT SELECT car_makers.Id, car_makers.Maker FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker GROUP BY car_makers.Id HAVING Count(*) > 3",
         "gold": "SELECT T1.Id ,  T1.Maker FROM CAR_MAKERS AS T1 JOIN MODEL_LIST AS T2 ON T1.Id  =  T2.Maker GROUP BY T1.Id HAVING count(*)  >=  2 INTERSECT SELECT T1.Id ,  T1.Maker FROM CAR_MAKERS AS T1 JOIN MODEL_LIST AS T2 ON T1.Id  =  T2.Maker JOIN CAR_NAMES AS T3 ON T2.model  =  T3.model GROUP BY T1.Id HAVING count(*)  >  3;",
         "db_id": "car_1",
-        "question": "What are the ids and makers of all car makers that produce at least 2 models and make more than 3 cars?"
+        "question": "What are the ids and makers of all car makers that produce at least 2 models and make more than 3 cars?",
+        "reason": "slack off"
     },
     {
         "index": 177,
@@ -661,7 +677,8 @@
         "pred": "SELECT countries.CountryId, countries.CountryName FROM countries JOIN car_makers ON countries.CountryId = car_makers.Country GROUP BY countries.CountryId HAVING Count(*) > 3 UNION SELECT countries.CountryId, countries.CountryName FROM countries JOIN car_makers ON countries.CountryId = car_makers.Country WHERE model_list.Model = \" fiat \" GROUP BY countries.CountryId HAVING Count(*) > 3",
         "gold": "SELECT T1.countryId ,  T1.CountryName FROM Countries AS T1 JOIN CAR_MAKERS AS T2 ON T1.CountryId  =  T2.Country GROUP BY T1.countryId HAVING count(*)  >  3 UNION SELECT T1.countryId ,  T1.CountryName FROM Countries AS T1 JOIN CAR_MAKERS AS T2 ON T1.CountryId  =  T2.Country JOIN MODEL_LIST AS T3 ON T2.Id  =  T3.Maker WHERE T3.Model  =  'fiat';",
         "db_id": "car_1",
-        "question": "What are the id and names of the countries which have more than 3 car makers or produce the 'fiat' model?"
+        "question": "What are the id and names of the countries which have more than 3 car makers or produce the 'fiat' model?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 178,
@@ -669,7 +686,8 @@
         "pred": "SELECT countries.CountryId, countries.CountryName FROM countries JOIN car_makers ON countries.CountryId = car_makers.Country GROUP BY countries.CountryId HAVING Count(*) > 3 UNION SELECT countries.CountryId, countries.CountryName FROM countries JOIN car_makers ON countries.CountryId = car_makers.Country JOIN model_list ON car_makers.Id = model_list.Maker WHERE model_list.Model = \" fiat \" GROUP BY countries.CountryId HAVING Count(*) > 3",
         "gold": "select t1.countryid ,  t1.countryname from countries as t1 join car_makers as t2 on t1.countryid  =  t2.country group by t1.countryid having count(*)  >  3 union select t1.countryid ,  t1.countryname from countries as t1 join car_makers as t2 on t1.countryid  =  t2.country join model_list as t3 on t2.id  =  t3.maker where t3.model  =  'fiat';",
         "db_id": "car_1",
-        "question": "What are the ids and names of all countries that either have more than 3 car makers or produce fiat model ?"
+        "question": "What are the ids and names of all countries that either have more than 3 car makers or produce fiat model ?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 211,
