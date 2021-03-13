@@ -6,7 +6,7 @@
         "gold": "SELECT avg(age) ,  min(age) ,  max(age) FROM singer WHERE country  =  'France'",
         "db_id": "concert_singer",
         "question": "What is the average, minimum, and maximum age for all French singers?",
-        "reason": "lack of value-link, ‘French’ in question and ’France‘ in database"
+        "reason": "duplicated SELECT, WHERE condition error, no-link between France and French"
     },
     {
         "index": 16,
@@ -231,7 +231,7 @@
         "gold": "SELECT T1.lname FROM student AS T1 JOIN has_pet AS T2 ON T1.stuid  =  T2.stuid JOIN pets AS T3 ON T3.petid  =  T2.petid WHERE T3.pet_age  =  3 AND T3.pettype  =  'cat'",
         "db_id": "pets_1",
         "question": "What is the last name of the student who has a cat that is 3 years old?",
-        "reason": "type error"
+        "reason": "WHERE condition error"
     },
     {
         "index": 90,
@@ -267,7 +267,7 @@
         "gold": "SELECT T1.Model FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id ORDER BY T2.horsepower ASC LIMIT 1;",
         "db_id": "car_1",
         "question": "Which model of the car has the minimum horsepower?",
-        "reason": "wrong gold"
+        "reason": "slack off, wrong JOIN"
     },
     {
         "index": 97,
