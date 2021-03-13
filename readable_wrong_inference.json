@@ -275,7 +275,8 @@
         "pred": "SELECT model_list.Model FROM model_list WHERE cars_data.Weight < (SELECT Avg(cars_data.Weight) FROM cars_data)",
         "gold": "SELECT T1.model FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id WHERE T2.Weight  <  (SELECT avg(Weight) FROM CARS_DATA)",
         "db_id": "car_1",
-        "question": "Find the model of the car whose weight is below the average weight."
+        "question": "Find the model of the car whose weight is below the average weight.",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 98,
@@ -283,7 +284,8 @@
         "pred": "SELECT model_list.Model FROM cars_data WHERE cars_data.Weight < (SELECT Avg(cars_data.Weight) FROM cars_data)",
         "gold": "SELECT T1.model FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id WHERE T2.Weight  <  (SELECT avg(Weight) FROM CARS_DATA)",
         "db_id": "car_1",
-        "question": "What is the model for the car with a weight smaller than the average?"
+        "question": "What is the model for the car with a weight smaller than the average?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 99,
@@ -291,7 +293,8 @@
         "pred": "SELECT car_makers.Maker FROM car_makers JOIN cars_data ON car_makers.Id = cars_data.Id WHERE cars_data.Year = 1970",
         "gold": "SELECT DISTINCT T1.Maker FROM CAR_MAKERS AS T1 JOIN MODEL_LIST AS T2 ON T1.Id  =  T2.Maker JOIN CAR_NAMES AS T3 ON T2.model  =  T3.model JOIN CARS_DATA AS T4 ON T3.MakeId  =  T4.id WHERE T4.year  =  '1970';",
         "db_id": "car_1",
-        "question": "Find the name of the makers that produced some cars in the year of 1970?"
+        "question": "Find the name of the makers that produced some cars in the year of 1970?",
+        "reason": "slack off, wrong JOIN"
     },
     {
         "index": 100,
@@ -299,7 +302,8 @@
         "pred": "SELECT DISTINCT car_makers.Maker FROM car_makers JOIN cars_data ON car_makers.Id = cars_data.Id WHERE cars_data.Year = 1970",
         "gold": "SELECT DISTINCT T1.Maker FROM CAR_MAKERS AS T1 JOIN MODEL_LIST AS T2 ON T1.Id  =  T2.Maker JOIN CAR_NAMES AS T3 ON T2.model  =  T3.model JOIN CARS_DATA AS T4 ON T3.MakeId  =  T4.id WHERE T4.year  =  '1970';",
         "db_id": "car_1",
-        "question": "What is the name of the different car makers who produced a car in 1970?"
+        "question": "What is the name of the different car makers who produced a car in 1970?",
+        "reason": "slack off, wrong JOIN"
     },
     {
         "index": 101,
@@ -307,7 +311,8 @@
         "pred": "SELECT car_names.Make, car_names.MakeId FROM cars_data JOIN car_names ON car_names.MakeId = cars_data.Id ORDER BY cars_data.Year Asc LIMIT 1",
         "gold": "SELECT T2.Make ,  T1.Year FROM CARS_DATA AS T1 JOIN CAR_NAMES AS T2 ON T1.Id  =  T2.MakeId WHERE T1.Year  =  (SELECT min(YEAR) FROM CARS_DATA);",
         "db_id": "car_1",
-        "question": "Find the make and production time of the cars that were produced in the earliest year?"
+        "question": "Find the make and production time of the cars that were produced in the earliest year?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 102,
@@ -315,7 +320,8 @@
         "pred": "SELECT car_makers.Maker, cars_data.Year FROM car_makers ORDER BY cars_data.Year Asc LIMIT 1",
         "gold": "SELECT T2.Make ,  T1.Year FROM CARS_DATA AS T1 JOIN CAR_NAMES AS T2 ON T1.Id  =  T2.MakeId WHERE T1.Year  =  (SELECT min(YEAR) FROM CARS_DATA);",
         "db_id": "car_1",
-        "question": "What is the maker of the carr produced in the earliest year and what year was it?"
+        "question": "What is the maker of the carr produced in the earliest year and what year was it?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 103,
@@ -323,7 +329,8 @@
         "pred": "SELECT DISTINCT model_list.Model FROM model_list WHERE cars_data.Year > 1980",
         "gold": "SELECT DISTINCT T1.model FROM MODEL_LIST AS T1 JOIN CAR_NAMES AS T2 ON T1.model  =  T2.model JOIN CARS_DATA AS T3 ON T2.MakeId  =  T3.id WHERE T3.year  >  1980;",
         "db_id": "car_1",
-        "question": "Which distinct car models are the produced after 1980?"
+        "question": "Which distinct car models are the produced after 1980?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 104,
@@ -331,7 +338,8 @@
         "pred": "SELECT DISTINCT model_list.Model FROM model_list WHERE model_list.ModelId > 1980",
         "gold": "SELECT DISTINCT T1.model FROM MODEL_LIST AS T1 JOIN CAR_NAMES AS T2 ON T1.model  =  T2.model JOIN CARS_DATA AS T3 ON T2.MakeId  =  T3.id WHERE T3.year  >  1980;",
         "db_id": "car_1",
-        "question": "What are the different models for the cards produced after 1980?"
+        "question": "What are the different models for the cards produced after 1980?",
+        "reason": "slack off, wrong JOIN"
     },
     {
         "index": 105,
@@ -339,7 +347,8 @@
         "pred": "SELECT continents.Continent, Count(*) FROM continents JOIN countries ON continents.ContId = countries.Continent GROUP BY continents.Continent",
         "gold": "SELECT T1.Continent ,  count(*) FROM CONTINENTS AS T1 JOIN COUNTRIES AS T2 ON T1.ContId  =  T2.continent JOIN car_makers AS T3 ON T2.CountryId  =  T3.Country GROUP BY T1.Continent;",
         "db_id": "car_1",
-        "question": "How many car makers are there in each continents? List the continent name and the count."
+        "question": "How many car makers are there in each continents? List the continent name and the count.",
+        "reason": "slack off, wrong JOIN"
     },
     {
         "index": 109,
@@ -347,7 +356,8 @@
         "pred": "SELECT car_makers.Maker, car_makers.FullName, Count(*) FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker GROUP BY car_makers.Maker",
         "gold": "select count(*) ,  t2.fullname from model_list as t1 join car_makers as t2 on t1.maker  =  t2.id group by t2.id;",
         "db_id": "car_1",
-        "question": "How many car models are produced by each maker ? Only list the count and the maker full name ."
+        "question": "How many car models are produced by each maker ? Only list the count and the maker full name .",
+        "reason": "SELECT wrong, GROUP by id is better"
     },
     {
         "index": 111,
@@ -355,7 +365,8 @@
         "pred": "SELECT cars_data.Accelerate FROM car_makers JOIN car_names ON car_makers.Id = car_names.MakeId WHERE car_names.Make = \" amc hornet sportabout \" AND car_makers.Maker = \" sw \"",
         "gold": "SELECT T1.Accelerate FROM CARS_DATA AS T1 JOIN CAR_NAMES AS T2 ON T1.Id  =  T2.MakeId WHERE T2.Make  =  'amc hornet sportabout (sw)';",
         "db_id": "car_1",
-        "question": "What is the accelerate of the car make amc hornet sportabout (sw)?"
+        "question": "What is the accelerate of the car make amc hornet sportabout (sw)?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 112,
@@ -363,7 +374,8 @@
         "pred": "SELECT cars_data.Accelerate FROM car_makers JOIN car_names ON car_makers.Id = car_names.MakeId WHERE car_names.Make = \" amc hornet sportabout \" AND car_makers.Maker = \" sw \"",
         "gold": "SELECT T1.Accelerate FROM CARS_DATA AS T1 JOIN CAR_NAMES AS T2 ON T1.Id  =  T2.MakeId WHERE T2.Make  =  'amc hornet sportabout (sw)';",
         "db_id": "car_1",
-        "question": "How much does the car accelerate that makes amc hornet sportabout (sw)?"
+        "question": "How much does the car accelerate that makes amc hornet sportabout (sw)?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 115,
@@ -371,7 +383,8 @@
         "pred": "SELECT Count(*) FROM countries WHERE countries.CountryName = \" usa \"",
         "gold": "SELECT count(*) FROM MODEL_LIST AS T1 JOIN CAR_MAKERS AS T2 ON T1.Maker  =  T2.Id JOIN COUNTRIES AS T3 ON T2.Country  =  T3.CountryId WHERE T3.CountryName  =  'usa';",
         "db_id": "car_1",
-        "question": "How many car models are produced in the usa?"
+        "question": "How many car models are produced in the usa?",
+        "reason": "slack off"
     },
     {
         "index": 116,
@@ -379,7 +392,8 @@
         "pred": "SELECT Count(*) FROM countries WHERE countries.CountryName = \" usa \"",
         "gold": "SELECT count(*) FROM MODEL_LIST AS T1 JOIN CAR_MAKERS AS T2 ON T1.Maker  =  T2.Id JOIN COUNTRIES AS T3 ON T2.Country  =  T3.CountryId WHERE T3.CountryName  =  'usa';",
         "db_id": "car_1",
-        "question": "What is the count of the car models produced in the United States?"
+        "question": "What is the count of the car models produced in the United States?",
+        "reason": "slack off"
     },
     {
         "index": 122,
@@ -387,7 +401,8 @@
         "pred": "SELECT car_makers.Maker, model_list.Model FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker",
         "gold": "SELECT Maker ,  Model FROM MODEL_LIST;",
         "db_id": "car_1",
-        "question": "What are the makers and models?"
+        "question": "What are the makers and models?",
+        "reason": "slack off"
     },
     {
         "index": 123,
@@ -395,7 +410,8 @@
         "pred": "SELECT DISTINCT countries.CountryName, countries.CountryId FROM countries JOIN car_makers ON countries.CountryId = car_makers.Country",
         "gold": "SELECT T1.CountryName ,  T1.CountryId FROM COUNTRIES AS T1 JOIN CAR_MAKERS AS T2 ON T1.CountryId  =  T2.Country GROUP BY T1.CountryId HAVING count(*)  >=  1;",
         "db_id": "car_1",
-        "question": "What are the countries having at least one car maker? List name and id."
+        "question": "What are the countries having at least one car maker? List name and id.",
+        "reason": "both right"
     },
     {
         "index": 128,
@@ -403,7 +419,8 @@
         "pred": "SELECT Avg(cars_data.Weight), Avg(cars_data.Weight), cars_data.Year FROM cars_data GROUP BY cars_data.Year",
         "gold": "SELECT avg(Weight) ,  YEAR FROM CARS_DATA GROUP BY YEAR;",
         "db_id": "car_1",
-        "question": "What is the average weight and year for each year?"
+        "question": "What is the average weight and year for each year?",
+        "reason": "duplicated select"
     },
     {
         "index": 129,
@@ -411,7 +428,8 @@
         "pred": "SELECT countries.CountryName FROM countries JOIN car_makers WHERE continents.Continent = \" europe \" GROUP BY car_makers.Country HAVING Count(*) >= 3",
         "gold": "SELECT T1.CountryName FROM COUNTRIES AS T1 JOIN CONTINENTS AS T2 ON T1.Continent  =  T2.ContId JOIN CAR_MAKERS AS T3 ON T1.CountryId  =  T3.Country WHERE T2.Continent  =  'europe' GROUP BY T1.CountryName HAVING count(*)  >=  3;",
         "db_id": "car_1",
-        "question": "Which countries in europe have at least 3 car manufacturers?"
+        "question": "Which countries in europe have at least 3 car manufacturers?",
+        "reason": "JOIN need ON"
     },
     {
         "index": 130,
@@ -419,7 +437,8 @@
         "pred": "SELECT countries.CountryName FROM countries JOIN car_makers ON countries.Continent = car_makers.Country WHERE continents.Continent = \" European \" GROUP BY countries.CountryName HAVING Count(*) >= 3",
         "gold": "SELECT T1.CountryName FROM COUNTRIES AS T1 JOIN CONTINENTS AS T2 ON T1.Continent  =  T2.ContId JOIN CAR_MAKERS AS T3 ON T1.CountryId  =  T3.Country WHERE T2.Continent  =  'europe' GROUP BY T1.CountryName HAVING count(*)  >=  3;",
         "db_id": "car_1",
-        "question": "What are the names of all European countries with at least 3 manufacturers?"
+        "question": "What are the names of all European countries with at least 3 manufacturers?",
+        "reason": "slack off, WRONG JOIN, countries.Continent = car_makers.Country"
     },
     {
         "index": 131,
@@ -427,7 +446,8 @@
         "pred": "SELECT Max(cars_data.Horsepower), Max(car_names.Make) FROM cars_data WHERE cars_data.Cylinders = 3",
         "gold": "SELECT T2.horsepower ,  T1.Make FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id WHERE T2.cylinders  =  3 ORDER BY T2.horsepower DESC LIMIT 1;",
         "db_id": "car_1",
-        "question": "What is the maximum horsepower and the make of the car models with 3 cylinders?"
+        "question": "What is the maximum horsepower and the make of the car models with 3 cylinders?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 132,
@@ -435,7 +455,8 @@
         "pred": "SELECT Max(cars_data.Horsepower), Max(cars_data.Horsepower) FROM cars_data WHERE cars_data.Cylinders = 3",
         "gold": "SELECT T2.horsepower ,  T1.Make FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id WHERE T2.cylinders  =  3 ORDER BY T2.horsepower DESC LIMIT 1;",
         "db_id": "car_1",
-        "question": "What is the largest amount of horsepower for the models with 3 cylinders and what make is it?"
+        "question": "What is the largest amount of horsepower for the models with 3 cylinders and what make is it?",
+        "reason": "slack off"
     },
     {
         "index": 133,
@@ -443,7 +464,8 @@
         "pred": "SELECT model_list.Model FROM model_list GROUP BY model_list.Model ORDER BY Sum(cars_data.MPG) Desc LIMIT 1",
         "gold": "SELECT T1.Model FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id ORDER BY T2.mpg DESC LIMIT 1;",
         "db_id": "car_1",
-        "question": "Which model saves the most gasoline? That is to say, have the maximum miles per gallon."
+        "question": "Which model saves the most gasoline? That is to say, have the maximum miles per gallon.",
+        "reason": "slack off, WRONG JOIN"
     },
     {
         "index": 134,
@@ -451,7 +473,8 @@
         "pred": "SELECT model_list.Model FROM cars_data ORDER BY cars_data.MPG Desc LIMIT 1",
         "gold": "select t1.model from car_names as t1 join cars_data as t2 on t1.makeid  =  t2.id order by t2.mpg desc limit 1;",
         "db_id": "car_1",
-        "question": "What is the car model with the highest mpg ?"
+        "question": "What is the car model with the highest mpg ?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 138,
@@ -459,7 +482,8 @@
         "pred": "SELECT Avg(cars_data.Edispl) FROM cars_data",
         "gold": "SELECT avg(T2.edispl) FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id WHERE T1.Model  =  'volvo';",
         "db_id": "car_1",
-        "question": "What is the average edispl for all volvos?"
+        "question": "What is the average edispl for all volvos?",
+        "reason": "slack off, WRONG JOIN"
     },
     {
         "index": 141,
@@ -467,7 +491,8 @@
         "pred": "SELECT model_list.Model FROM model_list JOIN car_names ON model_list.Model = car_names.Model GROUP BY model_list.Model ORDER BY Count(*) Desc LIMIT 1",
         "gold": "SELECT Model FROM CAR_NAMES GROUP BY Model ORDER BY count(*) DESC LIMIT 1;",
         "db_id": "car_1",
-        "question": "Which model has the most version(make) of cars?"
+        "question": "Which model has the most version(make) of cars?",
+        "reason": "both right"
     },
     {
         "index": 142,
@@ -475,7 +500,8 @@
         "pred": "SELECT model_list.Model FROM model_list GROUP BY model_list.Model ORDER BY Count(*) Desc LIMIT 1",
         "gold": "SELECT Model FROM CAR_NAMES GROUP BY Model ORDER BY count(*) DESC LIMIT 1;",
         "db_id": "car_1",
-        "question": "What model has the most different versions?"
+        "question": "What model has the most different versions?",
+        "reason": "both right"
     },
     {
         "index": 149,
@@ -483,7 +509,8 @@
         "pred": "SELECT car_makers.Maker, car_makers.FullName, car_makers.Id FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker GROUP BY car_makers.Id HAVING Count(*) > 3",
         "gold": "SELECT T1.FullName ,  T1.Id FROM CAR_MAKERS AS T1 JOIN MODEL_LIST AS T2 ON T1.Id  =  T2.Maker GROUP BY T1.Id HAVING count(*)  >  3;",
         "db_id": "car_1",
-        "question": "Which makers designed more than 3 car models? List full name and the id."
+        "question": "Which makers designed more than 3 car models? List full name and the id.",
+        "reason": "wrong select"
     },
     {
         "index": 150,
@@ -491,7 +518,8 @@
         "pred": "SELECT car_makers.Maker, car_makers.Id FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker GROUP BY car_makers.Id HAVING Count(*) > 3",
         "gold": "SELECT T1.FullName ,  T1.Id FROM CAR_MAKERS AS T1 JOIN MODEL_LIST AS T2 ON T1.Id  =  T2.Maker GROUP BY T1.Id HAVING count(*)  >  3;",
         "db_id": "car_1",
-        "question": "What are the names and ids of all makers with more than 3 models?"
+        "question": "What are the names and ids of all makers with more than 3 models?",
+        "reason": "wrong select"
     },
     {
         "index": 151,
@@ -499,7 +527,8 @@
         "pred": "SELECT DISTINCT model_list.Model FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker WHERE car_makers.FullName = \" General Motors \" OR cars_data.Weight > 3500",
         "gold": "SELECT DISTINCT T2.Model FROM CAR_NAMES AS T1 JOIN MODEL_LIST AS T2 ON T1.Model  =  T2.Model JOIN CAR_MAKERS AS T3 ON T2.Maker  =  T3.Id JOIN CARS_DATA AS T4 ON T1.MakeId  =  T4.Id WHERE T3.FullName  =  'General Motors' OR T4.weight  >  3500;",
         "db_id": "car_1",
-        "question": "Which distinctive models are produced by maker with the full name General Motors or weighing more than 3500?"
+        "question": "Which distinctive models are produced by maker with the full name General Motors or weighing more than 3500?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 152,
@@ -507,7 +536,8 @@
         "pred": "SELECT DISTINCT model_list.Model FROM car_makers JOIN model_list ON car_makers.Id = model_list.Maker WHERE car_makers.Maker = \" General Motors \" OR car_makers.Maker > 3500",
         "gold": "SELECT DISTINCT T2.Model FROM CAR_NAMES AS T1 JOIN MODEL_LIST AS T2 ON T1.Model  =  T2.Model JOIN CAR_MAKERS AS T3 ON T2.Maker  =  T3.Id JOIN CARS_DATA AS T4 ON T1.MakeId  =  T4.Id WHERE T3.FullName  =  'General Motors' OR T4.weight  >  3500;",
         "db_id": "car_1",
-        "question": "What are the different models created by either the car maker General Motors or weighed more than 3500?"
+        "question": "What are the different models created by either the car maker General Motors or weighed more than 3500?",
+        "reason": "slack off, 'select A From B'"
     },
     {
         "index": 153,
