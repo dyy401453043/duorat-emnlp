@@ -804,6 +804,7 @@ def duo_rat_decoder_item(
         target_relation_types=target_relation_types,
         memory_relation_types=memory_relation_types,
     )
+    # TODO: ADD builder
     decoder_item_builder.add_action_tokens(
         action_tokens=action_tokens(
             actions=preproc_item.actions, scoping=target_attention_scoping

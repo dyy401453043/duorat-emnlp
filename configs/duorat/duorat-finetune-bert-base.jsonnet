@@ -1,4 +1,4 @@
-(import 'duorat-base.libsonnet')(output_from=true) {
+(import 'duorat-base-origin.libsonnet')(output_from=true) {
     lr_scheduler: {
         "decay_steps": 98000,
         "end_lr": 0,
@@ -65,7 +65,7 @@
     },
     "train": {
         "amp_enabled": true,
-        "batch_size": 17,
+        "batch_size": 4,
         "n_grad_accumulation_steps": 7,
         "eval_batch_size": 20,
         "eval_beam_size": 1,
