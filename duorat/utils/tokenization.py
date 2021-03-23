@@ -3,6 +3,7 @@ from functools import lru_cache
 from typing import List, Sequence, Tuple
 
 import stanza
+import os
 from transformers import BertTokenizerFast
 
 from duorat.utils import registry #, corenlp
@@ -60,7 +61,8 @@ class CoreNLPTokenizer(AbstractTokenizer):
 @registry.register("tokenizer", "StanzaTokenizer")
 class StanzaTokenizer(AbstractTokenizer):
     def __init__(self):
-        stanza.download("en", processors="tokenize")
+        if not os.path.exists('/home/duyy-s20/stanza_resources/en/tokenize/ewt.pt'):
+            stanza.download("en", processors="tokenize")
         self.nlp = stanza.Pipeline(lang="en", processors="tokenize")
         self.lemmatizer = WordNetLemmatizer()
 
