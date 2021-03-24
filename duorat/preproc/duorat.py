@@ -42,6 +42,7 @@ from duorat.preproc.relations import (
 )
 from duorat.preproc.target import (
     ValidActionsMaskBuilder,
+    EnhanceKeyJoinMaskBuilder,
     ValidCopyMaskBuilder,
     CopyTargetMaskBuilder,
     index_frontier_field,
@@ -577,6 +578,9 @@ class DuoRATDecoderItemBuilder(object):
             transition_system=self.transition_system,
             allow_unk=self.allow_unk,
         )
+        self.enhance_key_join_mask_builder = EnhanceKeyJoinMaskBuilder(
+            source_tokens=self.positioned_source_tokens
+        )
         self.target_relations_builder = TargetRelationsBuilder(
             relation_types=self.target_relation_types
         )
@@ -674,6 +678,7 @@ class DuoRATDecoderItemBuilder(object):
         builder.valid_copy_mask_builder.add_token(token=positioned_action_info_token)
         builder.copy_target_mask_builder.add_token(token=positioned_action_info_token)
         builder.valid_actions_mask_builder.add_token(token=positioned_action_info_token)
+        builder.enhance_key_join_mask_builder.add_token(token=positioned_action_info_token)
         builder.target_relations_builder.add_token(token=positioned_action_info_token)
         builder.memory_relations_builder.add_token(token=positioned_action_info_token)
         return builder

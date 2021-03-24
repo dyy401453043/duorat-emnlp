@@ -272,6 +272,11 @@ class DuoRATModel(torch.nn.Module):
             valid_actions_mask=decoder_batch.valid_actions_mask,
             target=decoder_batch.target,
         ).mean()
+        # loss1 = self._compute_join_loss(
+        #     memory=memory,
+        #     output=self.output,
+        #     table_nums=decoder_batch.table_nums
+        # ).mean()
         return loss
 
     def items_to_duo_rat_batch(
