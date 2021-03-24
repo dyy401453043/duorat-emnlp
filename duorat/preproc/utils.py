@@ -12,6 +12,9 @@ from duorat.datasets.spider import SpiderSchema
 from duorat.asdl.transition_system import UnkAction
 from duorat.types import SQLSchema, frozendict, ColumnId, TableId, T, OrderedFrozenDict
 from duorat.utils import serialization
+import sqlite3
+from nltk.tokenize import sent_tokenize, word_tokenize
+from duorat.utils.tokenization import BERTTokenizer
 
 
 def pad_nd_tensor(
@@ -150,10 +153,30 @@ def preprocess_schema_uncached(
     table_to_columns = {}
     foreign_keys = {}
     foreign_keys_tables = defaultdict(set)
+    bert_tokenizer = BERTTokenizer('bert-large-uncased-whole-word-masking')
 
     for i, column in enumerate(schema.columns):
         column_name = tokenize(column.type, column.name, column.unsplit_name)
-        
+        value_token = []
+        if column.orig_name != '*':
+            conn = sqlite3.connect(db_path)
+            # Avoid "could not decode to utf-8" errors
+            conn.text_factory = lambda b: b.decode(errors="ignore")
+            query = f'SELECT "{column.orig_name}" FROM "{column.table.orig_name}";'
+            col_content = conn.execute(query).fetchall()
+            conn.close()
+            if len(col_content) > 0:
+                value1, value2 = str(col_content[0][0]), str(col_content[-1][0])
+                value1_token = bert_tokenizer.tokenize(value1)[:3] if len(bert_tokenizer.tokenize(value1)) > 3 else bert_tokenizer.tokenize(value1)
+                value2_token = bert_tokenizer.tokenize(value2)[:3] if len(bert_tokenizer.tokenize(value2)) > 3 else bert_tokenizer.tokenize(value2)
+                value_token = [bert_tokenizer.sep_token] +  value1_token + [bert_tokenizer.sep_token] + value2_token
+        column_name = column_name + value_token
+        with open('column_token.txt','a+',encoding='utf-8') as f:
+            for index, column_na in enumerate(column_name):
+                if index != len(column_name)-1:
+                    f.write(column_na + ', ')
+                else:
+                    f.write(column_na + '\n')
         column_names.append(column.unsplit_name)
         tokenized_column_names.append(column_name)
         original_column_names.append(column.orig_name)
@@ -169,6 +192,8 @@ def preprocess_schema_uncached(
             foreign_keys_tables[str(column.table.id)].add(
                 column.foreign_key_for.table.id
             )
+    with open('column_token.txt', 'a+', encoding='utf-8') as f:
+        f.write("======================" + '\n')
 
     for i, table in enumerate(schema.tables):
         table_names.append(table.unsplit_name)

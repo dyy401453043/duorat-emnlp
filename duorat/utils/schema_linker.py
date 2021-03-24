@@ -357,14 +357,14 @@ def span_matches_entity(
     else:
         span_str = " ".join([tagged_token.value for tagged_token in tagged_span])
         entity_name_str = entity_name
+        if span_str == entity_name_str:
+            return EXACT_MATCH
         # if span_str == entity_name_str or \
         #     (len(span_str.split(' ')) == 1 and len(entity_name_str.split(' ')) == 1 and
         #      similarity(stemmer.stem(span_str), stemmer.stem(entity_name_str)) > 0.68) or \
         #         (len(span_str.split(' ')) == len(entity_name_str.split(' ')) and
         #          similarity(stemmer.stem(span_str), stemmer.stem(entity_name_str)) > 0.9):
         #     return EXACT_MATCH
-        if span_str == entity_name_str:
-            return EXACT_MATCH
         elif span_str in entity_name_str:
             # if len(span_str)<2 and len(entity_name_str)-len(span_str)>5:
             #     return NO_MATCH
@@ -373,20 +373,26 @@ def span_matches_entity(
 
             # filter with similarity
             if len(entity_name_str.split(' '))==1:
-                # 'cylinders' 'makeid' no_link, problem in similarity
-                return PARTIAL_MATCH if similarity(stemmer.stem(tagged_span[0].value), stemmer.stem(entity_name_str)) > 0.55 else NO_MATCH
+                if similarity(stemmer.stem(tagged_span[0].value), stemmer.stem(entity_name_str)):
+                    return PARTIAL_MATCH if similarity(stemmer.stem(tagged_span[0].value), stemmer.stem(entity_name_str)) > 0.55 else NO_MATCH
+                else:
+                    return PARTIAL_MATCH if not(len(span_str)<3 and len(entity_name_str)-len(span_str)>3) else NO_MATCH
             else:
-                return PARTIAL_MATCH if not(len(span_str)<2 and len(entity_name_str)-len(span_str)>5) else NO_MATCH
+                return PARTIAL_MATCH if not(len(span_str)<3 and len(entity_name_str)-len(span_str)>5) else NO_MATCH
         elif len(tagged_span) == 1:
             if stemmer.stem(tagged_span[0].value) == entity_name_str:
                 return EXACT_MATCH
 
             if stemmer.stem(tagged_span[0].value) in entity_name_str:
-                return PARTIAL_MATCH if not(len(span_str)<2 and len(entity_name_str)-len(span_str)>5) else NO_MATCH
+                return PARTIAL_MATCH if not(len(span_str)<3 and len(entity_name_str)-len(span_str)>5) else NO_MATCH
 
             if  entity_name_str in span_str:
                 # When span length is 1, also test the other inclusion
                 # filter
-                return PARTIAL_MATCH if similarity(stemmer.stem(tagged_span[0].value), stemmer.stem(entity_name_str)) > 0.55 else NO_MATCH
+                if similarity(stemmer.stem(tagged_span[0].value), stemmer.stem(entity_name_str)):
+                    return PARTIAL_MATCH if similarity(stemmer.stem(tagged_span[0].value), stemmer.stem(entity_name_str)) > 0.55 else NO_MATCH
+                else:
+                    return PARTIAL_MATCH if not (
+                                len(span_str) < 3 and len(entity_name_str) - len(span_str) > 3) else NO_MATCH
         else:
             return NO_MATCH
