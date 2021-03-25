@@ -507,6 +507,7 @@ class TableToken(Token[TableId, VT]):
     value: VT
     scope: AttentionScope
     position: Pos = Pos(0)
+    foreign_keys_table = List
 
 
 @dataclass(order=True, frozen=True)

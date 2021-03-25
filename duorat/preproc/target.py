@@ -12,6 +12,9 @@ from duorat.asdl.transition_system import (
     GenTokenAction,
     TransitionSystem,
 )
+from duorat.asdl.lang.spider.spider_transition_system import (
+    SpiderTableAction,
+)
 from duorat.types import (
     KT,
     VT,
@@ -85,70 +88,6 @@ class ValidActionsMaskBuilder(object):
     def add_tokens(
         self, tokens: Iterable[Token[KT, ActionInfo]], copy: bool = False
     ) -> "ValidActionsMaskBuilder":
-        builder = deepcopy(self) if copy is True else self
-        for token in tokens:
-            builder.add_token(token=token)
-        return builder
-
-    def build(self, device: torch.device) -> torch.Tensor:
-        return self.sparse_2d_mask_tensor_builder.build(device=device)
-
-class EnhanceKeyJoinMaskBuilder(object):
-    question_tokens: Sequence[Token[KT, str]]
-    target_vocab: Vocab
-    transition_system: TransitionSystem
-    allow_unk: bool
-    previous_action_info: Optional[ActionInfo] = None
-    sparse_2d_mask_tensor_builder: Sparse2DMaskTensorBuilder = field(
-        default_factory=lambda: Sparse2DMaskTensorBuilder()
-    )
-
-    def __deepcopy__(self, memo):
-        builder = copy(self)
-        builder.previous_action_info = copy(self.previous_action_info)
-        builder.sparse_2d_mask_tensor_builder = deepcopy(
-            self.sparse_2d_mask_tensor_builder
-        )
-        return builder
-
-    def add_token(
-        self, token: Token[KT, ActionInfo], copy: bool = False
-    ) -> "EnhanceKeyJoinMaskBuilder":
-
-        def is_join_or_key(action_vocab, action_truth):
-            if action_vocab == action_truth and action_vocab.production ==
-
-        builder = deepcopy(self) if copy is True else self
-
-        can_be_copied = isinstance(
-            token.value.action, GenTokenAction
-        ) and token.value.action.token in [
-            token.value for token in builder.question_tokens
-        ]
-
-        for _index in map(
-            lambda action_index: (token.position, action_index[1]),
-            filter(
-                lambda action_index: is_join_or_key(
-                    action_vocab=action_index[0],
-                    action_truth=token.value.action,
-                ),
-                builder.target_vocab.stoi.items(),
-            ),
-        ):
-            builder.sparse_2d_mask_tensor_builder.append(index=_index)
-
-        builder.sparse_2d_mask_tensor_builder.resize(
-            size=(1 + token.position, len(builder.target_vocab))
-        )
-
-        builder.previous_action_info = token.value
-
-        return builder
-
-    def add_tokens(
-        self, tokens: Iterable[Token[KT, ActionInfo]], copy: bool = False
-    ) -> "EnhanceKeyJoinMaskBuilder":
         builder = deepcopy(self) if copy is True else self
         for token in tokens:
             builder.add_token(token=token)
@@ -276,6 +215,46 @@ class CopyTargetMaskBuilder(_ValidMaskBuilder):
         return (
             isinstance(action_info_token.value.action, GenTokenAction)
             and action_info_token.value.action.token == source_token.value
+        )
+
+
+@dataclass
+class EnhanceKeyJoinMaskBuilder(_ValidMaskBuilder):
+    source_tokens: Sequence[Token[KT, str]]
+    sparse_2d_mask_tensor_builder: Sparse2DMaskTensorBuilder = field(
+        default_factory=lambda: Sparse2DMaskTensorBuilder()
+    )
+    _source_group_token_max_position: Optional[int] = None
+    previous_table_action_info_token: Optional[ActionInfo] = None
+
+    def add_token(
+        self, token: Token[KT_P, ActionInfo], copy: bool = False
+    ) -> "EnhanceKeyJoinMaskBuilder":
+        builder = deepcopy(self) if copy is True else self
+
+        if token.value.frontier_field.type.name == "table":
+            for _index in (
+                (token.position, source_token.position)
+                for source_token in builder._valid_copy_source_tokens(
+                    action_info=token.value
+                )
+                if builder._predicate(source_token=source_token, action_info_token=token)
+            ):
+                builder.sparse_2d_mask_tensor_builder.append(index=_index,)
+
+            builder.previous_table_action_info_token = token
+
+        builder.sparse_2d_mask_tensor_builder.resize(
+            size=(1 + token.position, 1 + builder.source_group_token_max_position)
+        )
+
+    @staticmethod
+    def _predicate(
+        source_token: Token[KT, str], action_info_token: Token[KT_P, ActionInfo]
+    ) -> bool:
+        return (
+            isinstance(source_token, ColumnToken)
+            # TODO ADD CONDITION FOR THIS
         )
 
 
