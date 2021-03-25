@@ -162,14 +162,14 @@ def preprocess_schema_uncached(
             conn = sqlite3.connect(db_path)
             # Avoid "could not decode to utf-8" errors
             conn.text_factory = lambda b: b.decode(errors="ignore")
-            query = f'SELECT "{column.orig_name}" FROM "{column.table.orig_name}";'
+            query = f'SELECT "{column.orig_name}" FROM "{column.table.orig_name}" ORDER BY "{column.orig_name}";'
             col_content = conn.execute(query).fetchall()
             conn.close()
             if len(col_content) > 0:
                 value1, value2 = str(col_content[0][0]), str(col_content[-1][0])
-                value1_token = bert_tokenizer.tokenize(value1)[:3] if len(bert_tokenizer.tokenize(value1)) > 3 else bert_tokenizer.tokenize(value1)
-                value2_token = bert_tokenizer.tokenize(value2)[:3] if len(bert_tokenizer.tokenize(value2)) > 3 else bert_tokenizer.tokenize(value2)
-                value_token = [bert_tokenizer.sep_token] +  value1_token + [bert_tokenizer.sep_token] + value2_token
+                value1_token = bert_tokenizer.tokenize(value1)
+                value2_token = bert_tokenizer.tokenize(value2)
+                value_token = [bert_tokenizer.sep_token] + value1_token + [bert_tokenizer.sep_token] + value2_token
         column_name = column_name + value_token
         with open('column_token.txt','a+',encoding='utf-8') as f:
             for index, column_na in enumerate(column_name):
