@@ -679,8 +679,8 @@ class DuoRATDecoderItemBuilder(object):
         )
         builder.valid_copy_mask_builder.add_token(token=positioned_action_info_token)
         builder.copy_target_mask_builder.add_token(token=positioned_action_info_token)
-        builder.valid_actions_mask_builder.add_token(token=positioned_action_info_token)
         builder.enhance_key_join_mask_builder.add_token(token=positioned_action_info_token)
+        builder.valid_actions_mask_builder.add_token(token=positioned_action_info_token)
         builder.target_relations_builder.add_token(token=positioned_action_info_token)
         builder.memory_relations_builder.add_token(token=positioned_action_info_token)
         return builder
@@ -726,6 +726,7 @@ class DuoRATDecoderItemBuilder(object):
             ),
             valid_copy_mask=self.valid_copy_mask_builder.build(device=device),
             copy_target_mask=self.copy_target_mask_builder.build(device=device),
+            enhance_key_join_mask=self.enhance_key_join_mask_builder.build(device=device),
             valid_actions_mask=self.valid_actions_mask_builder.build(device=device),
             target=target,
         )
@@ -995,6 +996,9 @@ def duo_rat_decoder_batch(items: Iterable[DuoRATDecoderItem]) -> DuoRATDecoderBa
         ),
         copy_target_mask=_pad(
             lambda item: item.copy_target_mask, num_padding_dimensions=2
+        ),
+        enhance_key_join_mask=_pad(
+            lambda item: item.enhance_key_join_mask, num_padding_dimensions=2
         ),
         valid_actions_mask=_pad(lambda item: item.valid_actions_mask),
         target=_pad(lambda item: item.target),

@@ -11,6 +11,7 @@ from duorat.asdl.transition_system import (
     ReduceAction,
     GenTokenAction,
     TransitionSystem,
+    ApplyRuleAction,
 )
 from duorat.asdl.lang.spider.spider_transition_system import (
     SpiderTableAction,
@@ -225,12 +226,20 @@ class EnhanceKeyJoinMaskBuilder(_ValidMaskBuilder):
         default_factory=lambda: Sparse2DMaskTensorBuilder()
     )
     _source_group_token_max_position: Optional[int] = None
+    selecting_first_table = False
     previous_table_action_info_token: Optional[ActionInfo] = None
 
     def add_token(
         self, token: Token[KT_P, ActionInfo], copy: bool = False
     ) -> "EnhanceKeyJoinMaskBuilder":
         builder = deepcopy(self) if copy is True else self
+
+        if isinstance(token.value.action, ApplyRuleAction) \
+                and str(token.value.action.production) == 'from -> from(table_unit* table_units, cond? conds)':
+            builder.selecting_first_table = True
+
+        if isinstance(token.value.action, ReduceAction):
+            builder.selecting_first_table = False
 
         if isinstance(token.value.action, SpiderTableAction):
             for _index in (
@@ -240,10 +249,10 @@ class EnhanceKeyJoinMaskBuilder(_ValidMaskBuilder):
                 )
                 if builder._predicate(source_token=source_token,
                                       action_info_token=token,
-                                      previous_info_token=builder.previous_table_action_info_token)
+                                      previous_info_token=None if builder.selecting_first_table
+                                      else builder.previous_table_action_info_token)
             ):
                 builder.sparse_2d_mask_tensor_builder.append(index=_index,)
-
             builder.previous_table_action_info_token = token
 
         builder.sparse_2d_mask_tensor_builder.resize(

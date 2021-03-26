@@ -269,6 +269,7 @@ class DuoRATModel(torch.nn.Module):
             target_key_padding_mask=decoder_batch.target_key_padding_mask,
             valid_copy_mask=decoder_batch.valid_copy_mask,
             copy_target_mask=decoder_batch.copy_target_mask,
+            enhance_key_join_mask=decoder_batch.enhance_key_join_mask,
             valid_actions_mask=decoder_batch.valid_actions_mask,
             target=decoder_batch.target,
         ).mean()
@@ -337,6 +338,7 @@ class DuoRATModel(torch.nn.Module):
         target_key_padding_mask: torch.Tensor,
         valid_copy_mask: torch.Tensor,
         copy_target_mask: torch.Tensor,
+        enhance_key_join_mask: torch.Tensor,
         valid_actions_mask: torch.Tensor,
         target: torch.Tensor,
     ) -> torch.Tensor:
@@ -362,8 +364,16 @@ class DuoRATModel(torch.nn.Module):
             ),
             dim=2,
         )
+        key_join_likelihood = torch.logsumexp(
+            copy_log_probs.masked_fill(
+                mask=~enhance_key_join_mask.to(device=device), value=float("-inf"),
+            ),
+            dim=2,
+        )
         assert copy_log_likelihood.shape == (batch_size, seq_len)
+        assert key_join_likelihood.shape == (batch_size, seq_len)
         assert not torch.isnan(copy_log_likelihood).any()
+        assert not torch.isnan(key_join_likelihood).any()
 
         gen_logits = self.out_proj(output)
         assert not torch.isnan(gen_logits).any()
@@ -385,6 +395,10 @@ class DuoRATModel(torch.nn.Module):
             torch.stack(
                 [
                     copy_log_likelihood.masked_fill(
+                        mask=flipped_target_key_padding_mask, value=0
+                    )
+                    + p_copy_gen_logprobs[:, :, 0],
+                    key_join_likelihood.masked_fill(
                         mask=flipped_target_key_padding_mask, value=0
                     )
                     + p_copy_gen_logprobs[:, :, 0],

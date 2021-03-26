@@ -576,6 +576,7 @@ class DuoRATDecoderItem(object):
     memory_key_padding_mask: torch.Tensor
     valid_copy_mask: torch.Tensor
     copy_target_mask: torch.Tensor
+    enhance_key_join_mask: torch.Tensor
     valid_actions_mask: torch.Tensor
     target: torch.Tensor
 
@@ -628,6 +629,7 @@ class DuoRATDecoderBatch(object):
     memory_key_padding_mask: torch.Tensor
     valid_copy_mask: torch.Tensor
     copy_target_mask: torch.Tensor
+    enhance_key_join_mask: torch.Tensor
     valid_actions_mask: torch.Tensor
     target: torch.Tensor
 
