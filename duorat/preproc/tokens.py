@@ -105,8 +105,7 @@ def table_input_tokens(
     else:
         raise NotImplementedError
     return (
-        TableToken(key=table_id, value=s, scope=make_scope(table_id),
-                   foreign_keys_table=list(sql_schema.foreign_keys_tables[table_id]))
+        TableToken(key=table_id, value=s, scope=make_scope(table_id), foreign_keys_tables={})
         for s in sql_schema.tokenized_table_names[table_id]
     )
 
@@ -148,7 +147,8 @@ def table_source_tokens(
         )
     else:
         raise NotImplementedError
-    return (TableToken(key=table_id, value=table_id, scope=make_scope(table_id)),)
+    return (TableToken(key=table_id, value=table_id, scope=make_scope(table_id),
+                       foreign_keys_tables=sql_schema.foreign_keys_tables),)
 
 
 def table_and_columns_tokens(

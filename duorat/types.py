@@ -506,8 +506,8 @@ class TableToken(Token[TableId, VT]):
     key: TableId
     value: VT
     scope: AttentionScope
+    foreign_keys_tables: FrozenDict
     position: Pos = Pos(0)
-    foreign_keys_table = List
 
 
 @dataclass(order=True, frozen=True)

@@ -232,13 +232,15 @@ class EnhanceKeyJoinMaskBuilder(_ValidMaskBuilder):
     ) -> "EnhanceKeyJoinMaskBuilder":
         builder = deepcopy(self) if copy is True else self
 
-        if token.value.frontier_field.type.name == "table":
+        if isinstance(token.value.action, SpiderTableAction):
             for _index in (
                 (token.position, source_token.position)
                 for source_token in builder._valid_copy_source_tokens(
                     action_info=token.value
                 )
-                if builder._predicate(source_token=source_token, action_info_token=token)
+                if builder._predicate(source_token=source_token,
+                                      action_info_token=token,
+                                      previous_info_token=builder.previous_table_action_info_token)
             ):
                 builder.sparse_2d_mask_tensor_builder.append(index=_index,)
 
@@ -250,12 +252,20 @@ class EnhanceKeyJoinMaskBuilder(_ValidMaskBuilder):
 
     @staticmethod
     def _predicate(
-        source_token: Token[KT, str], action_info_token: Token[KT_P, ActionInfo]
+        source_token: Token[KT, str], action_info_token: Token[KT_P, ActionInfo], previous_info_token
     ) -> bool:
-        return (
-            isinstance(source_token, ColumnToken)
-            # TODO ADD CONDITION FOR THIS
-        )
+        if not isinstance(source_token, TableToken):
+            return False
+        if previous_info_token is None:
+            return action_info_token.value.action.token == source_token.value
+        action_table_id = previous_info_token.value.action.token
+        source_table_id = source_token.value
+        foreign_keys_tables = source_token.foreign_keys_tables
+        if action_table_id in foreign_keys_tables and source_table_id in foreign_keys_tables[action_table_id]:
+            return True
+        if source_table_id in foreign_keys_tables and action_table_id in foreign_keys_tables[source_table_id]:
+            return True
+        return False
 
 
 def index_frontier_field(action_info: ActionInfo, grammar: ASDLGrammar) -> int:

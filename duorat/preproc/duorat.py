@@ -514,6 +514,7 @@ class DuoRATDecoderItemBuilder(object):
     memory_key_padding_mask_builder: MemoryKeyPaddingMaskBuilder = field(init=False)
     valid_copy_mask_builder: ValidCopyMaskBuilder = field(init=False)
     copy_target_mask_builder: CopyTargetMaskBuilder = field(init=False)
+    enhance_key_join_mask_builder: EnhanceKeyJoinMaskBuilder = field(init=False)
     valid_actions_mask_builder: ValidActionsMaskBuilder = field(init=False)
     target_relations_builder: TargetRelationsBuilder = field(init=False)
     memory_relations_builder: MemoryRelationsBuilder = field(init=False)
