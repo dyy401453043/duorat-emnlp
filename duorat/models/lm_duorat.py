@@ -46,6 +46,7 @@ class LMDuoRATModel(DuoRATModel):
             target_key_padding_mask=decoder_batch.target_key_padding_mask,
             valid_copy_mask=decoder_batch.valid_copy_mask,
             copy_target_mask=decoder_batch.copy_target_mask,
+            enhance_key_join_mask=decoder_batch.enhance_key_join_mask,
             valid_actions_mask=decoder_batch.valid_actions_mask,
             target=decoder_batch.target,
         ).mean()

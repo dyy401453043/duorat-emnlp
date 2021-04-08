@@ -22,7 +22,7 @@
                 use_attention_mask: false,
                 use_token_type_ids: false,
                 use_position_ids: false,
-                use_segments: true
+                use_segments: false
             },
             "rat_attention_dropout": 0.1,
             "rat_dropout": 0.1,
